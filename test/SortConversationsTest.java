@@ -38,7 +38,7 @@ public class SortConversationsTest {
             sc.sortTopologisch(5, conditions);
         });
 
-        String expectedMessage = "Es gibt einen Zyklus in den Ordnungsbedingungen, eine Reihenfolge ist nicht möglich.";
+        String expectedMessage = "Es gibt einen Zyklus in den Ordnungsbedingungen. Keine Reihenfolge möglich.";
         Assertions.assertEquals(expectedMessage, exception.getMessage());
     }
 
