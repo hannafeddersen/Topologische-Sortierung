@@ -20,6 +20,8 @@ public class SortConversations {
             numPredecessor[y]++;
         }
 
+        Map<Integer, List<Integer>> searchTree = new HashMap<>();
+
         // Queue zur Verwaltung der Knoten ohne Vorgänger
         Queue<Integer> zeroPredecessor = new LinkedList<>();
         for (int i = 1; i <= numConversations; i++) {
@@ -35,6 +37,9 @@ public class SortConversations {
 
             if (adjacentList.containsKey(node)) {
                 for (int neighbor : adjacentList.get(node)) {
+                    searchTree.putIfAbsent(node, new ArrayList<>());
+                    searchTree.get(node).add(neighbor);
+
                     numPredecessor[neighbor]--;
 
                     // Wenn der Nachbar keinen Vorgänger hat, füge ihn zur Queue hinzu
@@ -46,10 +51,23 @@ public class SortConversations {
         }
 
         // Zyklusprüfung (Bei einem Zyklus kann keine Reihenfolge bestimmt werden)
-        if (order.size() != numConversations) {
+        if (hasEdgeNotInTree(adjacentList, searchTree)) {
             throw new IllegalArgumentException("Es gibt einen Zyklus in den Ordnungsbedingungen, eine Reihenfolge ist nicht möglich.");
         }
 
         return order;
+    }
+
+    public boolean hasEdgeNotInTree(Map<Integer, LinkedList<Integer>> G, Map<Integer, List<Integer>> T) {
+        for (int i : G.keySet()) {
+            List<Integer> neighbors = G.get(i);
+            for (int neighbor : neighbors) {
+                // Prüfe, ob die Kante (i, neighbor) in G existiert, aber nicht in T
+                if (!T.containsKey(i) || !T.get(i).contains(neighbor)) {
+                    return true; // Rückkante gefunden, also gibt es einen Zyklus
+                }
+            }
+        }
+        return false; // Keine Rückkanten gefunden, also kein Zyklus
     }
 }
